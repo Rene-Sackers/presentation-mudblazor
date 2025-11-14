@@ -20,8 +20,21 @@
               "icon": "lucide-file",
               "title": "1. Setup"
             }
+          },
+          {
+            "id": "af8ca19304bb5223",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.10.3"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.10.3"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -169,11 +182,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "35d14045cbb64243",
+  "active": "af8ca19304bb5223",
   "lastOpenFiles": [
     "Steps/999. Custom card.md",
-    "Steps/1. Setup.md",
     "Presentation.md",
+    "Steps/1. Setup.md",
     "Steps/back-button.md",
     "create a link.md",
     "Steps"
