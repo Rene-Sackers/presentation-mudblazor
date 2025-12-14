@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. Themes - MudBlazor Presentation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>MudBlazor Docs</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link ">Presentation</a></li>
+                <li><a href="../readme.html" class="nav-link ">README</a></li>
+                <li class="nav-section">
+                    <span class="nav-section-title">Steps</span>
+                    <ul class="nav-submenu">
+                        <li><a href="../steps/1-setup.html" class="nav-link ">1. Setup</a></li>
+                        <li><a href="../steps/2-themes.html" class="nav-link active">2. Themes</a></li>
+                        <li><a href="../steps/3-components.html" class="nav-link ">3. Components</a></li>
+                        <li><a href="../steps/4-in-practice.html" class="nav-link ">4. In practice</a></li>
+                        <li><a href="../steps/999-custom-card.html" class="nav-link ">999. Custom card</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <main class="content">
+            <div class="markdown-body">
+<h1>Themes, styling, CSS</h1>
+<h2>Create a new theme, set primary color</h2>
+<h3>Custom theme</h3>
+<pre><code>// MainLayour.razor
+
+// Add new theme
+private readonly MudTheme _myTheme = new()
+{
+    PaletteLight = new()
+    {
+        Primary = new MudColor(20, 180, 230, 255),
+        AppbarBackground = new MudColor(20, 180, 230, 255)
+    }
+};
+
+// Set theme on provider
+&lt;MudThemeProvider Theme=&quot;@_myTheme&quot;/&gt;
+
+// Test it out!
+&lt;MudButton Variant=&quot;Filled&quot;&gt;Hello .NET Zuid!&lt;/MudButton&gt;
+</code></pre>
+<h3>Dark theme</h3>
+<pre><code>&lt;MudThemeProvider IsDarkMode=&quot;true&quot;/&gt;
+</code></pre>
+<p>User preference theme</p>
+<pre><code>&lt;MudThemeProvider @ref=&quot;_mudThemeProvider&quot; Theme=&quot;_myTheme&quot; @bind-IsDarkMode=&quot;_isDarkMode&quot;/&gt;
+
+private bool _isDarkMode;
+private MudThemeProvider _mudThemeProvider;
+
+protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    if (firstRender)
+    {
+        _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+        StateHasChanged();
+    }
+}
+</code></pre>
+<h2>Color, Variant, Severity</h2>
+<pre><code>&lt;MudButton&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
+&lt;MudButton Variant=&quot;Variant.Filled&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
+&lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Primary&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
+&lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Error&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
+&lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Success&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
+
+&lt;MudAlert Severity=&quot;Severity.Normal&quot;&gt;Normal&lt;/MudAlert&gt;
+&lt;MudAlert Severity=&quot;Severity.Info&quot;&gt;Info&lt;/MudAlert&gt;
+&lt;MudAlert Severity=&quot;Severity.Success&quot; Variant=&quot;Variant.Filled&quot;&gt;Success&lt;/MudAlert&gt;
+&lt;MudAlert Severity=&quot;Severity.Error&quot; Variant=&quot;Variant.Outlined&quot;&gt;Error&lt;/MudAlert&gt;
+</code></pre>
+<h2>CSS/Flexbox classes</h2>
+<h3>Margin/padding</h3>
+<pre><code>ma-4 -&gt; margin ALL 4
+my-4 -&gt; margin Y-axis 4
+mx-4 -&gt; margin X-axis 4
+mt-4, mr-4, mb-4, ml-4 -&gt; margin top|right|bottom|left
+
+pa, px, py, pt, pr, pb, pl -&gt; padding all|x|y||top|right|bottom|left
+</code></pre>
+<pre><code>d-flex
+flex-column
+flex-row
+flex-grow-1
+
+align-items-center
+align-content-center
+gap-0 -&gt; gap-7
+</code></pre>
+
+            </div>
+        </main>
+    </div>
+    <script>
+        // Highlight code blocks
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+        
+        // Set active nav link
+        const currentPath = window.location.pathname;
+        const currentFile = currentPath.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-link').forEach(link => {
+            const linkHref = link.getAttribute('href');
+            const linkFile = linkHref.split('/').pop();
+            if (linkFile === currentFile || 
+                (currentFile === '' && linkFile === 'index.html') ||
+                (currentPath.endsWith('/') && linkFile === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

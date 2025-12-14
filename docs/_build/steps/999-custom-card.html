@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>999. Custom card - MudBlazor Presentation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>MudBlazor Docs</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link ">Presentation</a></li>
+                <li><a href="../readme.html" class="nav-link ">README</a></li>
+                <li class="nav-section">
+                    <span class="nav-section-title">Steps</span>
+                    <ul class="nav-submenu">
+                        <li><a href="../steps/1-setup.html" class="nav-link ">1. Setup</a></li>
+                        <li><a href="../steps/2-themes.html" class="nav-link ">2. Themes</a></li>
+                        <li><a href="../steps/3-components.html" class="nav-link ">3. Components</a></li>
+                        <li><a href="../steps/4-in-practice.html" class="nav-link ">4. In practice</a></li>
+                        <li><a href="../steps/999-custom-card.html" class="nav-link active">999. Custom card</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <main class="content">
+            <div class="markdown-body">
+<h2>Custom card component</h2>
+<p><a href="https://try.mudblazor.com/snippet/QOwTvvYzphrQxLQV">https://try.mudblazor.com/snippet/QOwTvvYzphrQxLQV</a></p>
+<pre><code>&lt;MudCard class=&quot;mt-6&quot;&gt;
+    &lt;MudCardMedia Image=&quot;https://media.dotnetzuid.nl/2025-09/f567c13f-ccc2-4503-8c1b-396de3f811d4.png&quot; Height=&quot;200&quot; /&gt;
+    
+    &lt;MudCardContent&gt;
+        &lt;MudText Typo=&quot;Typo.h5&quot;&gt;Mud Blazor &amp; C#14&lt;/MudText&gt;
+        &lt;div class=&quot;d-flex flex-row&quot;&gt;
+            &lt;div class=&quot;d-flex&quot;&gt;
+                &lt;MudIcon Icon=&quot;@Icons.Material.Filled.CalendarToday&quot; Size=&quot;@Size.Small&quot; /&gt;
+                &lt;span class=&quot;ml-2&quot;&gt;15 Dec 2025&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;flex-grow-1&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;d-flex&quot;&gt;
+                &lt;MudIcon Icon=&quot;@Icons.Material.Filled.GpsFixed&quot; Size=&quot;@Size.Small&quot; /&gt;
+                &lt;span class=&quot;ml-2&quot;&gt;Vecozo, Tilburg&lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;MudText Typo=&quot;Typo.body2&quot; class=&quot;my-6&quot;&gt;2 x 45 minutes: MudBlazor by René Sackers and What&#39;s new in C# 14 by Fons Sonnemans and Special Opening Act&lt;/MudText&gt;
+        &lt;div class=&quot;d-flex mt-6 justify-center gap-10&quot;&gt;
+            &lt;MudAvatar Style=&quot;height:100px; width:100px; font-size:2rem;&quot;&gt;
+                &lt;MudImage Src=&quot;https://media.dotnetzuid.nl/2025-06/96ccc169-904d-47a8-acee-68a76cb2504f.png&quot;&gt;&lt;/MudImage&gt;
+            &lt;/MudAvatar&gt;
+            &lt;MudAvatar Style=&quot;height:100px; width:100px; font-size:2rem;&quot;&gt;
+                &lt;MudImage Src=&quot;https://media.dotnetzuid.nl/2024-09/357f7574-a7c7-4d68-82aa-257cacdf3208.jpg&quot;&gt;&lt;/MudImage&gt;
+            &lt;/MudAvatar&gt;
+        &lt;/div&gt;
+    &lt;/MudCardContent&gt;
+&lt;/MudCard&gt;
+</code></pre>
+
+            </div>
+        </main>
+    </div>
+    <script>
+        // Highlight code blocks
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+        
+        // Set active nav link
+        const currentPath = window.location.pathname;
+        const currentFile = currentPath.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-link').forEach(link => {
+            const linkHref = link.getAttribute('href');
+            const linkFile = linkHref.split('/').pop();
+            if (linkFile === currentFile || 
+                (currentFile === '' && linkFile === 'index.html') ||
+                (currentPath.endsWith('/') && linkFile === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1. Setup - MudBlazor Presentation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>MudBlazor Docs</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link ">Presentation</a></li>
+                <li><a href="../readme.html" class="nav-link ">README</a></li>
+                <li class="nav-section">
+                    <span class="nav-section-title">Steps</span>
+                    <ul class="nav-submenu">
+                        <li><a href="../steps/1-setup.html" class="nav-link active">1. Setup</a></li>
+                        <li><a href="../steps/2-themes.html" class="nav-link ">2. Themes</a></li>
+                        <li><a href="../steps/3-components.html" class="nav-link ">3. Components</a></li>
+                        <li><a href="../steps/4-in-practice.html" class="nav-link ">4. In practice</a></li>
+                        <li><a href="../steps/999-custom-card.html" class="nav-link ">999. Custom card</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <main class="content">
+            <div class="markdown-body">
+<h1>Setup</h1>
+<h2>dotnet new mudblazor</h2>
+<pre><code>dotnet new install MudBlazor.Templates
+dotnet new mudblazor --name MyApplication --all-interactive --interactivity Auto
+dotnet new mudblazor --name MyApplication --all-interactive --interactivity Server
+dotnet new mudblazor --name MyApplication --all-interactive --interactivity WebAssembly
+</code></pre>
+<p><code>--all-interactive</code> is required when using <code>&lt;Mud*Provider&gt;</code> in MainLayout!</p>
+<h2>Manual</h2>
+<p><a href="https://mudblazor.com/getting-started/installation#manual-install-add-components">https://mudblazor.com/getting-started/installation#manual-install-add-components</a></p>
+<pre><code>dotnet add package MudBlazor
+</code></pre>
+<pre><code>// _Imports.razor
+
+@using MudBlazor
+</code></pre>
+<pre><code>// App.razor
+
+&lt;link href=&quot;https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap&quot; rel=&quot;stylesheet&quot; /&gt;
+&lt;link href=&quot;@Assets[&quot;_content/MudBlazor/MudBlazor.min.css&quot;]&quot; rel=&quot;stylesheet&quot; /&gt;
+
+// ...
+
+&lt;script src=&quot;@Assets[&quot;_content/MudBlazor/MudBlazor.min.js&quot;]&quot;&gt;&lt;/script&gt;
+</code></pre>
+<pre><code>// Program.cs
+
+using MudBlazor.Services;
+
+builder.Services.AddMudServices();
+</code></pre>
+<pre><code>// MainLayout.razor
+
+@* Required *@
+&lt;MudThemeProvider /&gt;
+&lt;MudPopoverProvider /&gt;
+
+@* Needed for dialogs *@
+&lt;MudDialogProvider /&gt;
+
+@* Needed for snackbars *@
+&lt;MudSnackbarProvider /&gt;
+</code></pre>
+<p><strong>Run it!</strong></p>
+<h2>Basic Layout</h2>
+<h3>Add an app bar and drawer</h3>
+<pre><code>&lt;MudLayout&gt;  
+    &lt;MudAppBar&gt;  
+       &lt;MudIconButton Icon=&quot;@Icons.Material.Filled.Menu&quot; Color=&quot;Color.Inherit&quot; Edge=&quot;Edge.Start&quot; Class=&quot;mr-2&quot;/&gt;
+       My Application
+    &lt;/MudAppBar&gt;
+    &lt;MudDrawer&gt;
+    &lt;/MudDrawer&gt;
+    &lt;MudMainContent&gt;
+      @Body
+    &lt;/MudMainContent&gt;
+&lt;/MudLayout&gt;
+</code></pre>
+<h2>Add open/close</h2>
+<pre><code>OnClick=&quot;@((e) =&gt; DrawerToggle())&quot;
+
+@code {  
+    bool _drawerOpen = true;  
+  
+    void DrawerToggle()  
+    {  
+       _drawerOpen = !_drawerOpen;  
+    }  
+}
+</code></pre>
+<h2>Add nav menu</h2>
+<pre><code>&lt;MudDrawer @bind-Open=&quot;@_drawerOpen&quot;&gt;  
+    &lt;MudNavMenu&gt;  
+       &lt;MudNavLink Href=&quot;/&quot; Match=&quot;NavLinkMatch.All&quot;&gt;Home&lt;/MudNavLink&gt;  
+       &lt;MudNavLink Href=&quot;/HelloWorld&quot; Match=&quot;NavLinkMatch.Prefix&quot;&gt;Hello world&lt;/MudNavLink&gt;
+    &lt;/MudNavMenu&gt;
+&lt;/MudDrawer&gt;
+</code></pre>
+
+            </div>
+        </main>
+    </div>
+    <script>
+        // Highlight code blocks
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+        
+        // Set active nav link
+        const currentPath = window.location.pathname;
+        const currentFile = currentPath.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-link').forEach(link => {
+            const linkHref = link.getAttribute('href');
+            const linkFile = linkHref.split('/').pop();
+            if (linkFile === currentFile || 
+                (currentFile === '' && linkFile === 'index.html') ||
+                (currentPath.endsWith('/') && linkFile === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

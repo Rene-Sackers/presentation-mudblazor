@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3. Components - MudBlazor Presentation</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>MudBlazor Docs</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link ">Presentation</a></li>
+                <li><a href="../readme.html" class="nav-link ">README</a></li>
+                <li class="nav-section">
+                    <span class="nav-section-title">Steps</span>
+                    <ul class="nav-submenu">
+                        <li><a href="../steps/1-setup.html" class="nav-link ">1. Setup</a></li>
+                        <li><a href="../steps/2-themes.html" class="nav-link ">2. Themes</a></li>
+                        <li><a href="../steps/3-components.html" class="nav-link active">3. Components</a></li>
+                        <li><a href="../steps/4-in-practice.html" class="nav-link ">4. In practice</a></li>
+                        <li><a href="../steps/999-custom-card.html" class="nav-link ">999. Custom card</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <main class="content">
+            <div class="markdown-body">
+<h1>Components</h1>
+<h2>Grid</h2>
+<pre><code>&lt;MudGrid Spacing=&quot;10&quot; Class=&quot;my-4&quot;&gt;
+    &lt;MudItem xs=&quot;12&quot; md=&quot;6&quot; lg=&quot;4&quot;&gt;
+        &lt;MudPaper Class=&quot;pa-4&quot;&gt;
+            XS = 12&lt;br/&gt;
+            MD = 6&lt;br/&gt;
+            LG = 4
+        &lt;/MudPaper&gt;
+    &lt;/MudItem&gt;
+    &lt;MudItem xs=&quot;12&quot; md=&quot;6&quot; lg=&quot;4&quot;&gt;
+        &lt;MudPaper Class=&quot;pa-4&quot;&gt;
+            XS = 12&lt;br/&gt;
+            MD = 6&lt;br/&gt;
+            LG = 4
+        &lt;/MudPaper&gt;
+    &lt;/MudItem&gt;
+    &lt;MudItem xs=&quot;12&quot; md=&quot;6&quot; lg=&quot;4&quot;&gt;
+        &lt;MudPaper Class=&quot;pa-4&quot;&gt;
+            XS = 12&lt;br/&gt;
+            MD = 6&lt;br/&gt;
+            LG = 4
+        &lt;/MudPaper&gt;
+    &lt;/MudItem&gt;
+&lt;/MudGrid&gt;
+</code></pre>
+<h2>Snackbar</h2>
+<pre><code>// Basic item
+Snackbar.Add(&quot;What&#39;s up .NET zuid!!!&quot;, Severity.Error);
+
+// Require interaction &amp; Action on close
+Snackbar.Add(&quot;What&#39;s up .NET zuid!!!&quot;, Severity.Error,
+    o =&gt;
+    {
+        o.RequireInteraction = true;
+        o.CloseButtonClickFunc = _ =&gt;
+        {
+            Snackbar.Add(&quot;Ok sorry.&quot;);
+            return Task.CompletedTask;
+        };
+    });
+
+// Render an entire page/component inside a snackbar item
+Snackbar.Add&lt;Home&gt;();
+</code></pre>
+<p>Snackbar too <del>slow</del> fast? Configure it!</p>
+<pre><code>// Program.cs
+
+builder.Services.AddMudServices(c =&gt;
+{
+    c.SnackbarConfiguration.ShowTransitionDuration = 5000;
+    c.SnackbarConfiguration.HideTransitionDuration = 5000;
+});
+</code></pre>
+<h2>MessageBox</h2>
+<p>Very simple &quot;are you sure&quot; confirmation box</p>
+<pre><code>&lt;MudButton Color=&quot;Color.Error&quot; Variant=&quot;Variant.Filled&quot; EndIcon=&quot;@Icons.Material.Filled.Delete&quot; @onclick=&quot;@DeletThisNow&quot;&gt;Delet this now&lt;/MudButton&gt;
+
+private async Task DeletThisNow()
+{
+    var result = await DialogService.ShowMessageBox(&quot;Delete this&quot;, &quot;Are you sure about that?&quot;, yesText: &quot;Yeeeeee&quot;, noText: &quot;Nah&quot;, cancelText: &quot;nvm&quot;);
+    if (result != true)
+        return;
+    
+    Snackbar.Add(&quot;Item deleted!&quot;, Severity.Success);
+}
+</code></pre>
+<h2>Table</h2>
+<p>Create new page <code>ServerSideTable.razor</code><br>Add to nav</p>
+<pre><code>&lt;MudNavLink Href=&quot;/ServerSideTable&quot; Match=&quot;NavLinkMatch.Prefix&quot;&gt;Server side table&lt;/MudNavLink&gt;
+</code></pre>
+<h3>Server side data example</h3>
+<pre><code>@page &quot;/ServerSideTable&quot;
+@using System.Threading
+
+&lt;MudTable @ref=&quot;_attendeeTable&quot; ServerData=&quot;GetServerDataAsync&quot; Dense=&quot;true&quot; Hover=&quot;true&quot;&gt;
+    &lt;ToolBarContent&gt;
+        &lt;MudText Typo=&quot;Typo.h6&quot;&gt;Meeting attendees&lt;/MudText&gt;
+    &lt;/ToolBarContent&gt;
+    &lt;HeaderContent&gt;
+        &lt;MudTh&gt;
+            &lt;MudTableSortLabel T=&quot;MeetingAttendee&quot; SortLabel=&quot;@(nameof(MeetingAttendee.Name))&quot;&gt;Name&lt;/MudTableSortLabel&gt;
+        &lt;/MudTh&gt;
+        &lt;MudTh&gt;
+            &lt;MudTableSortLabel T=&quot;MeetingAttendee&quot; SortLabel=&quot;@(nameof(MeetingAttendee.DateSignedUp))&quot;&gt;Date signed up&lt;/MudTableSortLabel&gt;
+        &lt;/MudTh&gt;
+        &lt;MudTh&gt;
+            &lt;MudTableSortLabel T=&quot;MeetingAttendee&quot; SortLabel=&quot;@(nameof(MeetingAttendee.WasPresent))&quot;&gt;Was present&lt;/MudTableSortLabel&gt;
+        &lt;/MudTh&gt;
+    &lt;/HeaderContent&gt;
+        &lt;MudTd DataLabel=&quot;Name&quot;&gt;@context.Name&lt;/MudTd&gt;
+        &lt;MudTd DataLabel=&quot;Date signed up&quot;&gt;@context.DateSignedUp.ToShortDateString()&lt;/MudTd&gt;
+        &lt;MudTd DataLabel=&quot;Was present&quot;&gt;
+            &lt;MudCheckBox @bind-Value=&quot;@context.WasPresent&quot;&gt;Was present&lt;/MudCheckBox&gt;
+        &lt;/MudTd&gt;
+    &lt;NoRecordsContent&gt;
+        &lt;MudText&gt;No matching records found&lt;/MudText&gt;
+    &lt;/NoRecordsContent&gt;
+    &lt;LoadingContent&gt;
+        &lt;MudText&gt;Loading...&lt;/MudText&gt;
+    &lt;/LoadingContent&gt;
+    &lt;PagerContent&gt;
+        &lt;MudTablePager/&gt;
+    &lt;/PagerContent&gt;
+&lt;/MudTable&gt;
+
+@code {
+    private MudTable&lt;MeetingAttendee&gt; _attendeeTable = null!;
+
+    private async Task&lt;TableData&lt;MeetingAttendee&gt;&gt; GetServerDataAsync(TableState state, CancellationToken token)
+    {
+        await Task.Delay(1000, token);
+        
+        IEnumerable&lt;MeetingAttendee&gt; data = GetAttendees();
+
+        switch (state.SortLabel)
+        {
+            case nameof(MeetingAttendee.Name):
+                // Order by LAST name
+                data = data.OrderByDirection(state.SortDirection,
+                    a =&gt;
+                    {
+                        var splitName = a.Name.Split(&#39; &#39;);
+                        
+                        // Fons, please forgive me
+                        return $&quot;{splitName[^1]} {string.Join(&#39; &#39;, splitName[..1])}&quot;;
+                    });
+                break;
+            case nameof(MeetingAttendee.WasPresent):
+                data = data.OrderByDirection(state.SortDirection, a =&gt; a.WasPresent);
+                break;
+            case nameof(MeetingAttendee.DateSignedUp):
+                data = data.OrderByDirection(state.SortDirection, a =&gt; a.DateSignedUp);
+                break;
+        }
+
+        var totalItemCount = data.Count();
+        var pagedData = data
+            .Skip(state.Page * state.PageSize)
+            .Take(state.PageSize)
+            .ToList();
+
+        return new TableData&lt;MeetingAttendee&gt;
+        {
+            TotalItems = totalItemCount,
+            Items = pagedData
+        };
+    }
+    
+    #region Data provider
+    
+    private static readonly Random Random = new();
+    private static readonly string[] FirstNames = { &quot;John&quot;, &quot;Jane&quot;, &quot;Michael&quot;, &quot;Emma&quot;, &quot;William&quot;, &quot;Olivia&quot;, &quot;James&quot;, &quot;Sophia&quot;, &quot;David&quot;, &quot;Isabella&quot; };
+    private static readonly string[] LastNames = { &quot;Smith&quot;, &quot;Johnson&quot;, &quot;Williams&quot;, &quot;Brown&quot;, &quot;Jones&quot;, &quot;Garcia&quot;, &quot;Miller&quot;, &quot;Davis&quot;, &quot;Martinez&quot;, &quot;Wilson&quot; };
+
+    private static MeetingAttendee[]? _attendees;
+
+    private static MeetingAttendee[] GetAttendees()
+    {
+        if (_attendees != null)
+            return _attendees;
+
+        const int generateCount = 100;
+        var attendees = new List&lt;MeetingAttendee&gt;(generateCount);
+        for (var i = 0; i &lt; generateCount; i++)
+        {
+            attendees.Add(new MeetingAttendee
+            {
+                Name = $&quot;{FirstNames[Random.Next(0, FirstNames.Length)]} {LastNames[Random.Next(0, LastNames.Length)]}&quot;,
+                DateSignedUp = DateTime.Now.AddDays(-Random.Next(3, 75)),
+                WasPresent = Random.Next(0, 2) == 1
+            });
+        }
+
+        return _attendees = attendees.ToArray();
+    }
+
+    public class MeetingAttendee
+    {
+        public string Name { get; set; }
+
+        public DateTime DateSignedUp { get; set; }
+
+        public bool WasPresent { get; set; }
+    }
+    
+    #endregion
+}
+</code></pre>
+<h2>Search bar</h2>
+<pre><code>&lt;ToolBarContent&gt;
+    &lt;MudText Typo=&quot;Typo.h6&quot;&gt;Meeting attendees&lt;/MudText&gt;
+    &lt;MudSpacer /&gt;
+    &lt;MudTextField T=&quot;string&quot; ValueChanged=&quot;@(s =&gt; OnSearchStringChanged(s))&quot; Placeholder=&quot;Search&quot; Adornment=&quot;Adornment.Start&quot; AdornmentIcon=&quot;@Icons.Material.Filled.Search&quot; IconSize=&quot;Size.Medium&quot; Class=&quot;mt-0&quot; /&gt;
+&lt;/ToolBarContent&gt;
+
+&lt;MudTd DataLabel=&quot;Name&quot;&gt;
+    &lt;MudHighlighter HighlightedText=&quot;@_searchString&quot; Text=&quot;@context.Name&quot; /&gt;
+&lt;/MudTd&gt;
+
+private string _searchString = &quot;&quot;;
+
+private async Task&lt;TableData&lt;MeetingAttendee&gt;&gt; GetServerDataAsync(TableState state, CancellationToken token)
+{
+    await Task.Delay(1000, token);
+    
+    IEnumerable&lt;MeetingAttendee&gt; data = GetAttendees();
+
+// Add this
+    if (!string.IsNullOrWhiteSpace(_searchString))
+        data = data.Where(d =&gt; d.Name.Contains(_searchString));
+// /Add this
+
+//...
+}
+
+private void OnSearchStringChanged(string searchString)
+{
+    _searchString = searchString;
+    _attendeeTable.ReloadServerData();
+}
+</code></pre>
+
+            </div>
+        </main>
+    </div>
+    <script>
+        // Highlight code blocks
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+        
+        // Set active nav link
+        const currentPath = window.location.pathname;
+        const currentFile = currentPath.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-link').forEach(link => {
+            const linkHref = link.getAttribute('href');
+            const linkFile = linkHref.split('/').pop();
+            if (linkFile === currentFile || 
+                (currentFile === '' && linkFile === 'index.html') ||
+                (currentPath.endsWith('/') && linkFile === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
