@@ -102,8 +102,13 @@ function getHTMLTemplate(navMenu, content, title, filePath) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
+    <a href="#" id="toggle-sidebar" class="hamburger-menu-icon" onclick="document.getElementById('sidebar').classList.toggle('open'); return false;">
+        <span></span>
+        <span></span>
+        <span></span>
+    </a>
     <div class="container">
-        <nav class="sidebar">
+        <nav class="sidebar" id="sidebar">
             <ul class="nav-menu">
 ${navMenu}
             </ul>
