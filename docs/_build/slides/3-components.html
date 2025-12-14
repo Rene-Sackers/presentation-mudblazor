@@ -59,7 +59,9 @@
 &lt;/MudGrid&gt;
 </code></pre>
 <h2>Snackbar</h2>
-<pre><code>// Basic item
+<pre><code>@inject ISnackbar Snackbar
+
+// Basic item
 Snackbar.Add(&quot;What&#39;s up .NET zuid!!!&quot;, Severity.Error);
 
 // Require interaction &amp; Action on close
@@ -88,7 +90,9 @@ builder.Services.AddMudServices(c =&gt;
 </code></pre>
 <h2>MessageBox</h2>
 <p>Very simple &quot;are you sure&quot; confirmation box</p>
-<pre><code>&lt;MudButton Color=&quot;Color.Error&quot; Variant=&quot;Variant.Filled&quot; EndIcon=&quot;@Icons.Material.Filled.Delete&quot; @onclick=&quot;@DeletThisNow&quot;&gt;Delet this now&lt;/MudButton&gt;
+<pre><code>@inject IDialogService DialogService
+
+&lt;MudButton Color=&quot;Color.Error&quot; Variant=&quot;Variant.Filled&quot; EndIcon=&quot;@Icons.Material.Filled.Delete&quot; @onclick=&quot;@DeletThisNow&quot;&gt;Delet this now&lt;/MudButton&gt;
 
 private async Task DeletThisNow()
 {
@@ -98,6 +102,9 @@ private async Task DeletThisNow()
     
     Snackbar.Add(&quot;Item deleted!&quot;, Severity.Success);
 }
+</code></pre>
+<p>Render entire homepage inside the dialog? Why not?</p>
+<pre><code>await DialogService.ShowAsync&lt;Home&gt;();
 </code></pre>
 <h2>Table</h2>
 <p>Create new page <code>ServerSideTable.razor</code><br>Add to nav</p>
@@ -221,7 +228,7 @@ private async Task DeletThisNow()
     #endregion
 }
 </code></pre>
-<h2>Search bar</h2>
+<h2>Table search</h2>
 <pre><code>&lt;ToolBarContent&gt;
     &lt;MudText Typo=&quot;Typo.h6&quot;&gt;Meeting attendees&lt;/MudText&gt;
     &lt;MudSpacer /&gt;
@@ -242,7 +249,7 @@ private async Task&lt;TableData&lt;MeetingAttendee&gt;&gt; GetServerDataAsync(Ta
 
 // Add this
     if (!string.IsNullOrWhiteSpace(_searchString))
-        data = data.Where(d =&gt; d.Name.Contains(_searchString));
+        data = data.Where(d =&gt; d.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
 // /Add this
 
 //...

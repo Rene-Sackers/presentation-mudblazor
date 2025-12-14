@@ -84,6 +84,13 @@ builder.Services.AddMudServices();
        My Application
     &lt;/MudAppBar&gt;
     &lt;MudDrawer&gt;
+        &lt;MudDrawerHeader&gt;
+            &lt;MudText Typo=&quot;Typo.h6&quot;&gt;My App&lt;/MudText&gt;
+        &lt;/MudDrawerHeader&gt;
+        &lt;MudNavMenu&gt;  
+            &lt;MudNavLink Href=&quot;/&quot; Match=&quot;NavLinkMatch.All&quot;&gt;Home&lt;/MudNavLink&gt;  
+            &lt;MudNavLink Href=&quot;/HelloWorld&quot; Match=&quot;NavLinkMatch.Prefix&quot;&gt;Hello world&lt;/MudNavLink&gt;
+        &lt;/MudNavMenu&gt;
     &lt;/MudDrawer&gt;
     &lt;MudMainContent&gt;
       @Body
@@ -91,7 +98,8 @@ builder.Services.AddMudServices();
 &lt;/MudLayout&gt;
 </code></pre>
 <h2>Add open/close</h2>
-<pre><code>OnClick=&quot;@((e) =&gt; DrawerToggle())&quot;
+<pre><code>&lt;MudIconButton OnClick=&quot;@((e) =&gt; DrawerToggle())&quot;
+&lt;MudDrawer @bind-Open=&quot;_drawerOpen&quot;&gt;
 
 @code {  
     bool _drawerOpen = true;  
@@ -101,14 +109,6 @@ builder.Services.AddMudServices();
        _drawerOpen = !_drawerOpen;  
     }  
 }
-</code></pre>
-<h2>Add nav menu</h2>
-<pre><code>&lt;MudDrawer @bind-Open=&quot;@_drawerOpen&quot;&gt;  
-    &lt;MudNavMenu&gt;  
-       &lt;MudNavLink Href=&quot;/&quot; Match=&quot;NavLinkMatch.All&quot;&gt;Home&lt;/MudNavLink&gt;  
-       &lt;MudNavLink Href=&quot;/HelloWorld&quot; Match=&quot;NavLinkMatch.Prefix&quot;&gt;Hello world&lt;/MudNavLink&gt;
-    &lt;/MudNavMenu&gt;
-&lt;/MudDrawer&gt;
 </code></pre>
 
             </div>

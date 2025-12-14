@@ -51,8 +51,9 @@ private readonly MudTheme _myTheme = new()
 &lt;MudThemeProvider Theme=&quot;@_myTheme&quot;/&gt;
 
 // Test it out!
-&lt;MudButton Variant=&quot;Filled&quot;&gt;Hello .NET Zuid!&lt;/MudButton&gt;
+&lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Primary&quot;&gt;Hello .NET Zuid!&lt;/MudButton&gt;
 </code></pre>
+<p>See <a href="https://mudblazor.com/customization/default-theme#palette">https://mudblazor.com/customization/default-theme#palette</a> for the entire pallette.</p>
 <h3>Dark theme</h3>
 <pre><code>&lt;MudThemeProvider IsDarkMode=&quot;true&quot;/&gt;
 </code></pre>
@@ -75,11 +76,13 @@ protected override async Task OnAfterRenderAsync(bool firstRender)
 <pre><code>&lt;MudButton&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
 &lt;MudButton Variant=&quot;Variant.Filled&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
 &lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Primary&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
+&lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Warning&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
 &lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Error&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
 &lt;MudButton Variant=&quot;Variant.Filled&quot; Color=&quot;Color.Success&quot;&gt;What&#39;s up .NET zuid!&lt;/MudButton&gt;
 
 &lt;MudAlert Severity=&quot;Severity.Normal&quot;&gt;Normal&lt;/MudAlert&gt;
 &lt;MudAlert Severity=&quot;Severity.Info&quot;&gt;Info&lt;/MudAlert&gt;
+&lt;MudAlert Severity=&quot;Severity.Warning&quot; Variant=&quot;Variant.Filled&quot;&gt;Success&lt;/MudAlert&gt;
 &lt;MudAlert Severity=&quot;Severity.Success&quot; Variant=&quot;Variant.Filled&quot;&gt;Success&lt;/MudAlert&gt;
 &lt;MudAlert Severity=&quot;Severity.Error&quot; Variant=&quot;Variant.Outlined&quot;&gt;Error&lt;/MudAlert&gt;
 </code></pre>
