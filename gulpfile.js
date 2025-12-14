@@ -27,43 +27,64 @@ function discoverMarkdownFiles() {
       .replace(/^-|-$/g, '');
   }
   
+  // Function to convert directory name to URL-friendly name
+  function toUrlDirName(dirname) {
+    return dirname
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+  
   // Function to extract title from filename
   function extractTitle(filename) {
     return filename.replace(/\.md$/, '');
   }
   
-  // Scan root directory for markdown files (excluding Steps folder)
+  // Scan root directory for markdown files
   const rootFiles = fs.readdirSync(docsDir)
-    .filter(file => file.endsWith('.md') && fs.statSync(path.join(docsDir, file)).isFile());
+    .filter(file => {
+      const fullPath = path.join(docsDir, file);
+      return file.endsWith('.md') && fs.statSync(fullPath).isFile();
+    });
   
-  // Process root level files (e.g., Presentation.md -> index.html)
+  // Process root level files (e.g., index.md -> index.html)
   rootFiles.forEach(file => {
     const title = extractTitle(file);
     files.push({
       src: file,
-      dest: file === 'Presentation.md' ? 'index.html' : `${toUrlName(file)}.html`,
+      dest: file === 'index.md' ? 'index.html' : `${toUrlName(file)}.html`,
       title: title,
-      isRoot: true
+      directory: null
     });
   });
   
-  // Scan Steps directory
-  const stepsDir = path.join(docsDir, 'Steps');
-  if (fs.existsSync(stepsDir)) {
-    const stepFiles = fs.readdirSync(stepsDir)
-      .filter(file => file.endsWith('.md') && fs.statSync(path.join(stepsDir, file)).isFile())
+  // Scan all first-level subdirectories
+  const subdirs = fs.readdirSync(docsDir)
+    .filter(file => {
+      const fullPath = path.join(docsDir, file);
+      return fs.statSync(fullPath).isDirectory() && file !== '_build';
+    });
+  
+  subdirs.forEach(subdir => {
+    const subdirPath = path.join(docsDir, subdir);
+    const subdirFiles = fs.readdirSync(subdirPath)
+      .filter(file => {
+        const fullPath = path.join(subdirPath, file);
+        return file.endsWith('.md') && fs.statSync(fullPath).isFile();
+      })
       .sort(); // Sort alphabetically/numerically
     
-    stepFiles.forEach(file => {
+    subdirFiles.forEach(file => {
       const title = extractTitle(file);
+      const urlDirName = toUrlDirName(subdir);
       files.push({
-        src: `Steps/${file}`,
-        dest: `steps/${toUrlName(file)}.html`,
+        src: `${subdir}/${file}`,
+        dest: `${urlDirName}/${toUrlName(file)}.html`,
         title: title,
-        isRoot: false
+        directory: subdir
       });
     });
-  }
+  });
   
   return files;
 }
@@ -83,9 +104,6 @@ function getHTMLTemplate(navMenu, content, title, filePath) {
 <body>
     <div class="container">
         <nav class="sidebar">
-            <div class="sidebar-header">
-                <h1>MudBlazor Docs</h1>
-            </div>
             <ul class="nav-menu">
 ${navMenu}
             </ul>
@@ -123,32 +141,21 @@ ${content}
 
 // Generate navigation menu HTML
 function generateNavMenu(currentPage, allFiles) {
-  const isInSteps = currentPage.startsWith('steps/');
-  const basePath = isInSteps ? '../' : '';
+  // Determine if we're in a subdirectory
+  const isInSubdir = currentPage.includes('/') && currentPage !== 'index.html';
+  const basePath = isInSubdir ? '../' : '';
   
-  // Separate root files and steps files
-  const rootFiles = allFiles.filter(f => f.isRoot);
-  const stepFiles = allFiles.filter(f => !f.isRoot);
+  // Separate root files and subdirectory files
+  const rootFiles = allFiles.filter(f => f.directory === null);
+  const subdirFiles = allFiles.filter(f => f.directory !== null);
   
-  // Build nav items
-  const navItems = [];
-  
-  // Add root files
-  rootFiles.forEach(file => {
-    navItems.push({
-      href: `${basePath}${file.dest}`,
-      title: file.title,
-      isActive: currentPage === file.dest
-    });
-  });
-  
-  // Add step files
-  stepFiles.forEach(file => {
-    navItems.push({
-      href: `${basePath}${file.dest}`,
-      title: file.title,
-      isActive: currentPage === file.dest
-    });
+  // Group subdirectory files by directory
+  const filesByDir = {};
+  subdirFiles.forEach(file => {
+    if (!filesByDir[file.directory]) {
+      filesByDir[file.directory] = [];
+    }
+    filesByDir[file.directory].push(file);
   });
 
   let navHTML = '';
@@ -160,13 +167,15 @@ function generateNavMenu(currentPage, allFiles) {
     navHTML += `                <li><a href="${href}" class="nav-link ${isActive ? 'active' : ''}">${file.title}</a></li>\n`;
   });
   
-  // Add Steps section if there are step files
-  if (stepFiles.length > 0) {
+  // Add sections for each subdirectory
+  const sortedDirs = Object.keys(filesByDir).sort();
+  sortedDirs.forEach(dirName => {
+    const dirFiles = filesByDir[dirName];
     navHTML += `                <li class="nav-section">\n`;
-    navHTML += `                    <span class="nav-section-title">Steps</span>\n`;
+    navHTML += `                    <span class="nav-section-title">${dirName}</span>\n`;
     navHTML += `                    <ul class="nav-submenu">\n`;
     
-    stepFiles.forEach(file => {
+    dirFiles.forEach(file => {
       const href = `${basePath}${file.dest}`;
       const isActive = currentPage === file.dest;
       navHTML += `                        <li><a href="${href}" class="nav-link ${isActive ? 'active' : ''}">${file.title}</a></li>\n`;
@@ -174,7 +183,7 @@ function generateNavMenu(currentPage, allFiles) {
     
     navHTML += `                    </ul>\n`;
     navHTML += `                </li>`;
-  }
+  });
   
   return navHTML;
 }
@@ -183,7 +192,8 @@ function generateNavMenu(currentPage, allFiles) {
 function getRelativePath(currentPage) {
   if (currentPage === 'index.html') {
     return '';
-  } else if (currentPage.startsWith('steps/')) {
+  } else if (currentPage.includes('/')) {
+    // Any file in a subdirectory needs to go up one level
     return '../';
   }
   return '';
@@ -224,14 +234,33 @@ gulp.task('build', function() {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  if (!fs.existsSync(path.join(outputDir, 'steps'))) {
-    fs.mkdirSync(path.join(outputDir, 'steps'), { recursive: true });
-  }
+  
+  // Create output directories for all subdirectories
+  const subdirs = new Set();
+  markdownFiles.forEach(file => {
+    if (file.directory) {
+      const urlDirName = file.dest.split('/')[0];
+      subdirs.add(urlDirName);
+    }
+  });
+  
+  subdirs.forEach(subdir => {
+    const subdirPath = path.join(outputDir, subdir);
+    if (!fs.existsSync(subdirPath)) {
+      fs.mkdirSync(subdirPath, { recursive: true });
+    }
+  });
 
-  // Copy CSS file
-  gulp.src(`${docsDir}/styles.css`)
-    .pipe(gulp.dest(outputDir))
-    .pipe(gulp.dest(path.join(outputDir, 'steps')));
+  // Copy CSS file to root and all subdirectories
+  const cssDestinations = [outputDir];
+  subdirs.forEach(subdir => {
+    cssDestinations.push(path.join(outputDir, subdir));
+  });
+  
+  cssDestinations.forEach(dest => {
+    gulp.src(`${docsDir}/styles.css`)
+      .pipe(gulp.dest(dest));
+  });
 
   // Process each markdown file
   const tasks = markdownFiles.map(file => {
