@@ -1,0 +1,72 @@
+﻿@using MudBlazor.Utilities
+@inherits LayoutComponentBase
+
+@* Required *@
+<MudThemeProvider @ref="_mudThemeProvider" Theme="_myTheme" @bind-IsDarkMode="_isDarkMode"/>
+<MudPopoverProvider/>
+
+@* Needed for dialogs *@
+<MudDialogProvider/>
+
+@* Needed for snackbars *@
+<MudSnackbarProvider/>
+
+
+<MudLayout>
+	<MudAppBar>
+		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" Class="mr-2" OnClick="@((e) => DrawerToggle())"/>
+		My Application
+	</MudAppBar>
+
+	<MudDrawer @bind-Open="_drawerOpen">
+		<MudDrawerHeader>
+			<MudText Typo="Typo.h6">My App</MudText>
+		</MudDrawerHeader>
+		<MudNavMenu>
+			<MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+			<MudNavLink Href="/HelloWorld" Match="NavLinkMatch.Prefix">Hello world</MudNavLink>
+		</MudNavMenu>
+	</MudDrawer>
+
+	<MudMainContent>
+		@Body
+	</MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+	An unhandled error has occurred.
+	<a href="." class="reload">Reload</a>
+	<span class="dismiss">🗙</span>
+</div>
+
+
+@code {
+	bool _drawerOpen = true;
+
+	private readonly MudTheme _myTheme = new()
+	{
+		PaletteLight = new()
+		{
+			Primary = new MudColor(20, 180, 230, 255),
+			AppbarBackground = new MudColor(20, 180, 230, 255)
+		}
+	};
+
+	private MudThemeProvider _mudThemeProvider;
+	private bool _isDarkMode;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			_isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+			StateHasChanged();
+		}
+	}
+
+	void DrawerToggle()
+	{
+		_drawerOpen = !_drawerOpen;
+	}
+
+}

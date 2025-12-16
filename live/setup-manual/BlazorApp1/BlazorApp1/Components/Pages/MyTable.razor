@@ -1,0 +1,133 @@
+﻿
+@page "/MyTable"
+@using System.Threading
+
+<MudTable @ref="_attendeeTable" ServerData="GetServerDataAsync" Dense="true" Hover="true">
+	<ToolBarContent>
+		<MudText Typo="Typo.h6">Meeting attendees</MudText>
+		<MudSpacer/>
+		<MudTextField T="string" ValueChanged="@(s => OnSearchStringChanged(s))" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"/>
+	</ToolBarContent>
+	<HeaderContent>
+		<MudTh>
+			<MudTableSortLabel T="MeetingAttendee" SortLabel="@(nameof(MeetingAttendee.Name))">Name</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel T="MeetingAttendee" SortLabel="@(nameof(MeetingAttendee.DateSignedUp))">Date signed up</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel T="MeetingAttendee" SortLabel="@(nameof(MeetingAttendee.WasPresent))">Was present</MudTableSortLabel>
+		</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="Name">
+			<MudHighlighter HighlightedText="@_searchString" Text="@context.Name"/>
+		</MudTd>
+		<MudTd DataLabel="Date signed up">@context.DateSignedUp.ToShortDateString()</MudTd>
+		<MudTd DataLabel="Was present">
+			<MudCheckBox @bind-Value="@context.WasPresent">Was present</MudCheckBox>
+		</MudTd>
+	</RowTemplate>
+	<NoRecordsContent>
+		<MudText>No matching records found</MudText>
+	</NoRecordsContent>
+	<LoadingContent>
+		<MudText>Loading...</MudText>
+	</LoadingContent>
+	<PagerContent>
+		<MudTablePager/>
+	</PagerContent>
+</MudTable>
+
+@code {
+	private MudTable<MeetingAttendee> _attendeeTable = null!;
+	private string _searchString = "";
+private void OnSearchStringChanged(string searchString)
+{
+    _searchString = searchString;
+    _attendeeTable.ReloadServerData();
+}
+
+	private async Task<TableData<MeetingAttendee>> GetServerDataAsync(TableState state, CancellationToken token)
+	{
+		await Task.Delay(1000, token);
+
+		IEnumerable<MeetingAttendee> data = GetAttendees();
+		
+		if (!string.IsNullOrWhiteSpace(_searchString))
+			data = data.Where(d => d.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
+
+		switch (state.SortLabel)
+		{
+			case nameof(MeetingAttendee.Name):
+				// Order by LAST name
+				data = data.OrderByDirection(state.SortDirection,
+					a =>
+					{
+						var splitName = a.Name.Split(' ');
+
+						// Fons, please forgive me
+						return $"{splitName[^1]} {string.Join(' ', splitName[..1])}";
+					});
+				break;
+			case nameof(MeetingAttendee.WasPresent):
+				data = data.OrderByDirection(state.SortDirection, a => a.WasPresent);
+				break;
+			case nameof(MeetingAttendee.DateSignedUp):
+				data = data.OrderByDirection(state.SortDirection, a => a.DateSignedUp);
+				break;
+		}
+
+		var totalItemCount = data.Count();
+		var pagedData = data
+			.Skip(state.Page * state.PageSize)
+			.Take(state.PageSize)
+			.ToList();
+
+		return new TableData<MeetingAttendee>
+		{
+			TotalItems = totalItemCount,
+			Items = pagedData
+		};
+	}
+
+	#region Data provider
+
+	private static readonly Random Random = new();
+	private static readonly string[] FirstNames = { "John", "Jane", "Michael", "Emma", "William", "Olivia", "James", "Sophia", "David", "Isabella" };
+	private static readonly string[] LastNames = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Martinez", "Wilson" };
+
+	private static MeetingAttendee[]? _attendees;
+
+	private static MeetingAttendee[] GetAttendees()
+	{
+		if (_attendees != null)
+			return _attendees;
+
+		const int generateCount = 100;
+		var attendees = new List<MeetingAttendee>(generateCount);
+		for (var i = 0; i < generateCount; i++)
+		{
+			attendees.Add(new MeetingAttendee
+			{
+				Name = $"{FirstNames[Random.Next(0, FirstNames.Length)]} {LastNames[Random.Next(0, LastNames.Length)]}",
+				DateSignedUp = DateTime.Now.AddDays(-Random.Next(3, 75)),
+				WasPresent = Random.Next(0, 2) == 1
+			});
+		}
+
+		return _attendees = attendees.ToArray();
+	}
+
+	public class MeetingAttendee
+	{
+		public string Name { get; set; }
+
+		public DateTime DateSignedUp { get; set; }
+
+		public bool WasPresent { get; set; }
+	}
+
+	#endregion
+
+}

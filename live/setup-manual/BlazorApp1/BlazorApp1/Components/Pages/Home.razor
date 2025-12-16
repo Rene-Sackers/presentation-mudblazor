@@ -1,0 +1,70 @@
+﻿@page "/"
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@code {
+	private int _snapPoint;
+
+	private async Task Callback()
+	{
+		await DialogService.ShowAsync<Home>();
+	}
+
+}
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<MudButton Color="Color.Primary">Hello DotNet Zuid!</MudButton>
+
+
+
+
+<MudButton Size="Size.Large" Color="Color.Error" EndIcon="@Icons.Material.Filled.Earbuds" OnClick="Callback">What's up .NET zuid!</MudButton>
+
+
+<MudButton Variant="Variant.Filled">What's up .NET zuid!</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary">What's up .NET zuid!</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Warning">What's up .NET zuid!</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Error">What's up .NET zuid!</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Success">What's up .NET zuid!</MudButton>
+
+<div class="d-flex flex-column gap-8 ma-4">
+	<MudAlert Severity="Severity.Normal">Normal</MudAlert>
+	<MudAlert Severity="Severity.Info">Info</MudAlert>
+	<MudAlert Severity="Severity.Warning" Variant="Variant.Filled">Success</MudAlert>
+	<MudAlert Severity="Severity.Success" Variant="Variant.Filled">Success</MudAlert>
+	<MudAlert Severity="Severity.Error" Variant="Variant.Outlined">Error</MudAlert>
+</div>
+
+<MudSlider Min="1" Max="12" @bind-Value="@_snapPoint"></MudSlider>
+
+<MudGrid Spacing="10" Class="my-4">
+	<MudItem xs="@_snapPoint" md="6" lg="4">
+		<MudPaper Class="pa-4">
+			XS = 12<br/>
+			MD = 6<br/>
+			LG = 4
+		</MudPaper>
+	</MudItem>
+
+	<MudItem xs="@_snapPoint" md="6" lg="4">
+		<MudPaper Class="pa-4">
+			XS = 12<br/>
+			MD = 6<br/>
+			LG = 4
+		</MudPaper>
+	</MudItem>
+
+	<MudItem xs="@_snapPoint" md="6" lg="4">
+		<MudPaper Class="pa-4">
+			XS = 12<br/>
+			MD = 6<br/>
+			LG = 4
+		</MudPaper>
+	</MudItem>
+</MudGrid>
